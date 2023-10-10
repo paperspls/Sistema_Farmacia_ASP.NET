@@ -13,10 +13,18 @@ namespace SistemaFarmacia.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Produto>().ToTable("tb_produtos");
+            modelBuilder.Entity<Categoria>().ToTable("tb_categorias");
+
+            modelBuilder.Entity<Produto>()
+                         .HasOne(p => p.Categoria)
+                         .WithMany(c => c.Produto)
+                         .HasForeignKey("CategoriaId")
+                         .OnDelete(DeleteBehavior.Cascade);
         }
 
         // Registro das Entidades
         public DbSet<Produto> Produtos { get; set; } = null!;
+        public DbSet<Categoria> Categorias { get; set; } = null!;
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

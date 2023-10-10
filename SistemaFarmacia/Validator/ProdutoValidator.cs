@@ -13,10 +13,10 @@ namespace SistemaFarmacia.Validator
                 .MinimumLength(5)
                 .MaximumLength(100);
 
-            RuleFor(p => p.Tarja)
+            RuleFor(p => p.Descricao)
                 .NotEmpty()
                 .MinimumLength(5)
-                .MaximumLength(100);
+                .MaximumLength(1000);
 
             RuleFor(p => p.Preco)
                 .NotEmpty()

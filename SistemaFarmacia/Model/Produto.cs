@@ -14,11 +14,13 @@ namespace SistemaFarmacia.Model
         public string Nome { get; set; } = string.Empty;
 
         [Column(TypeName = "varchar")]
-        [StringLength(100)]
-        public string Tarja { get; set; } = string.Empty;
+        [StringLength(1000)]
+        public string Descricao { get; set; } = string.Empty;
 
         [Column(TypeName = "varchar")]
         [StringLength(100)]
         public string Preco { get; set; } = string.Empty;
+
+        public virtual Categoria? Categoria { get; set; }
     }
 }

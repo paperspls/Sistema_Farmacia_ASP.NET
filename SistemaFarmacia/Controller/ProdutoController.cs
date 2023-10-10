@@ -57,9 +57,9 @@ namespace SistemaFarmacia.Controller
             var Resposta = await _produtoService.Create(produto);
 
             if (Resposta is null)
-                return BadRequest("Categoria não encontrada!");
+                return BadRequest("Categoria não encontrada");
 
-            return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
+            return CreatedAtAction(nameof(GetById), new { Id = produto.Id }, produto);
         }
 
 
@@ -67,17 +67,19 @@ namespace SistemaFarmacia.Controller
         public async Task<ActionResult> Update([FromBody] Produto produto)
         {
             if (produto.Id == 0)
-                return BadRequest("Id do Produto é inválido!");
+                return BadRequest("Id do Produto é invalido");
 
             var validarProduto = await _produtoValidator.ValidateAsync(produto);
 
             if (!validarProduto.IsValid)
+            {
                 return StatusCode(StatusCodes.Status400BadRequest, validarProduto);
+            }
 
             var Resposta = await _produtoService.Update(produto);
 
-            if (Resposta is null)
-                return NotFound("Postagem e/ou Categoria não encontrados!");
+            if (Resposta == null)
+                return NotFound("Produto e/ou Categoria não Encontrados");
 
             return Ok(Resposta);
         }
@@ -88,7 +90,7 @@ namespace SistemaFarmacia.Controller
             var BuscaProduto = await _produtoService.GetById(id);
 
             if (BuscaProduto is null)
-                return NotFound("Produto não encontrado!");
+                return NotFound("O Produto não foi encontrada!");
 
             await _produtoService.Delete(BuscaProduto);
 

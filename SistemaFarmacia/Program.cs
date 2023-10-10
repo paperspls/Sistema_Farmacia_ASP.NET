@@ -16,7 +16,14 @@ namespace SistemaFarmacia
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            // Add Controller Class
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                }
+            );
             // Conexão com o Banco de dados
             var connectionString = builder.Configuration.
                     GetConnectionString("DefaultConnection");
@@ -27,9 +34,11 @@ namespace SistemaFarmacia
 
             // Validação das Entidades
             builder.Services.AddTransient<IValidator<Produto>, ProdutoValidator>();
+            builder.Services.AddTransient<IValidator<Categoria>, CategoriaValidator>();
 
             // Registrar as Classes e Interfaces Service
             builder.Services.AddScoped<IProdutoService, ProdutoService>();
+            builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

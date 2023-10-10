@@ -16,7 +16,9 @@ namespace SistemaFarmacia.Service.Implements
 
         public async Task<IEnumerable<Produto>> GetAll()
         {
-            return await _context.Produtos.ToListAsync();
+            return await _context.Produtos
+                .Include(p => p.Categoria)
+                .ToListAsync();
         }
 
         public async Task<Produto?> GetById(long id)
@@ -24,6 +26,7 @@ namespace SistemaFarmacia.Service.Implements
             try
             {
                 var Produto = await _context.Produtos
+                    .Include(p => p.Categoria)
                     .FirstAsync(i => i.Id == id);
 
                 return Produto;
@@ -37,6 +40,7 @@ namespace SistemaFarmacia.Service.Implements
         public async Task<IEnumerable<Produto>> GetByNome(string nome)
         {
             var Produto = await _context.Produtos
+                .Include(p => p.Categoria)
                 .Where(p => p.Nome.Contains(nome))
                 .ToListAsync();
 
@@ -57,6 +61,8 @@ namespace SistemaFarmacia.Service.Implements
 
             if (ProdutoUpdate is null)
                 return null;
+
+            produto.Categoria = produto.Categoria is not null ? _context.Categorias.FirstOrDefault(t => t.id == produto.Categoria.id) : null;
 
             _context.Entry(ProdutoUpdate).State = EntityState.Detached;
             _context.Entry(produto).State = EntityState.Modified;
