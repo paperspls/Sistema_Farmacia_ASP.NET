@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using SistemaFarmacia.Data;
 using SistemaFarmacia.Model;
+using SistemaFarmacia.Service;
 
 namespace SistemaFarmacia.Service.Implements
 {
@@ -25,11 +27,11 @@ namespace SistemaFarmacia.Service.Implements
         {
             try
             {
-                var Produto = await _context.Produtos
+                var ProdutoUpdate = await _context.Produtos
                     .Include(p => p.Categoria)
                     .FirstAsync(i => i.Id == id);
 
-                return Produto;
+                return ProdutoUpdate;
             }
             catch
             {
@@ -39,42 +41,51 @@ namespace SistemaFarmacia.Service.Implements
 
         public async Task<IEnumerable<Produto>> GetByNome(string nome)
         {
-            var Produto = await _context.Produtos
-                .Include(p => p.Categoria)
-                .Where(p => p.Nome.Contains(nome))
-                .ToListAsync();
+            var Produtos = await _context.Produtos
+               .Include(p => p.Categoria)
+               .Where(p => p.Nome.Contains(nome)).ToListAsync();
+            return Produtos;
+        }
+
+        public async Task<Produto?> Create(Produto Produto)
+        {
+            if (Produto.Categoria is not null)
+            {
+                var BuscaCategoria = await _context.Categorias.FindAsync(Produto.Categoria.Id);
+
+                if (BuscaCategoria is null)
+                    return null;
+            }
+            Produto.Categoria = Produto.Categoria is not null ? _context.Categorias.FirstOrDefault(t => t.Id == Produto.Categoria.Id) : null;
+
+            await _context.Produtos.AddAsync(Produto);
+            await _context.SaveChangesAsync();
 
             return Produto;
         }
 
-        public async Task<Produto?> Create(Produto produto)
+        public async Task<Produto?> Update(Produto Produto)
         {
-            await _context.Produtos.AddAsync(produto);
-            await _context.SaveChangesAsync();
-
-            return produto;
-        }
-
-        public async Task<Produto?> Update(Produto produto)
-        {
-            var ProdutoUpdate = await _context.Produtos.FindAsync(produto.Id);
+            var ProdutoUpdate = await _context.Produtos.FindAsync(Produto.Id);
 
             if (ProdutoUpdate is null)
                 return null;
 
-            produto.Categoria = produto.Categoria is not null ? _context.Categorias.FirstOrDefault(t => t.id == produto.Categoria.id) : null;
+            Produto.Categoria = Produto.Categoria is not null ? _context.Categorias.FirstOrDefault(t => t.Id == Produto.Categoria.Id) : null;
 
             _context.Entry(ProdutoUpdate).State = EntityState.Detached;
-            _context.Entry(produto).State = EntityState.Modified;
+            _context.Entry(Produto).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return produto;
+            return Produto;
         }
 
         public async Task Delete(Produto produto)
         {
-            _context.Produtos.Remove(produto);
+            _context.Remove(produto);
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

@@ -25,7 +25,7 @@ namespace SistemaFarmacia.Service.Implements
             try
             {
                 var CategoriaUpdate = await _context.Categorias.Include(t => t.Produto)
-                    .FirstAsync(i => i.id == id);
+                    .FirstAsync(i => i.Id == id);
 
                 return CategoriaUpdate;
             }
@@ -53,7 +53,7 @@ namespace SistemaFarmacia.Service.Implements
 
         public async Task<Categoria?> Update(Categoria categoria)
         {
-            var CategoriaUpdate = await _context.Categorias.FindAsync(categoria.id);
+            var CategoriaUpdate = await _context.Categorias.FindAsync(categoria.Id);
 
             if (CategoriaUpdate is null)
                 return null;

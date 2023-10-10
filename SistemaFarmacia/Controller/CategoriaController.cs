@@ -55,13 +55,13 @@ namespace SistemaFarmacia.Controller
 
             await _categoriaService.Create(categoria);
 
-            return CreatedAtAction(nameof(GetById), new { Id = categoria.id }, categoria);
+            return CreatedAtAction(nameof(GetById), new { Id = categoria.Id }, categoria);
         }
 
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] Categoria categoria)
         {
-            if (categoria.id == 0)
+            if (categoria.Id == 0)
                 return BadRequest("Id da Categoria é invalido");
 
             var validarCategoria = await _categoriaValidator.ValidateAsync(categoria);

@@ -9,7 +9,7 @@ namespace SistemaFarmacia.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long id { get; set; }
+        public long Id { get; set; }
 
         [Column(TypeName = "varchar")]
         [StringLength(100)]
